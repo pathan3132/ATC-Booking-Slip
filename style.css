@@ -1,0 +1,532 @@
+/* Add this at the very top of your style.css */
+* {
+    box-sizing: border-box; /* Isse inputs bahar nahi niklenge */
+}
+
+/* Goods Table Adjustments */
+.goods-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    table-layout: fixed; /* Column width fix rakhta hai */
+}
+
+.goods-table th, .goods-table td { 
+    border: 1px solid #ccc; 
+    padding: 0;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+
+/* Baaki numeric inputs (Pkg, Weight, Rate) ka bhi size badhane ke liye */
+.cell-input { 
+    width: 100%; 
+    height: 100px;
+    border: none !important; 
+    padding: 10px;
+    text-align: center; 
+    
+    /* YAHAN CHANGE KIYA HAI */
+    font-size: 1.5em;      /* Numbers ka size bada karne ke liye */
+    font-weight: bold;
+    
+    outline: none;
+    background: transparent;
+    display: block;
+    line-height: 80px;
+}
+
+/* Name of Goods (Textarea) ke andar ka text size badhane ke liye */
+.goods-table td textarea {
+    height: 80px;
+    width: 100%;
+    font-size: 1.3em; /* Text size */
+    font-weight: bold;
+    border: none;
+    resize: none;
+    outline: none;
+    background: transparent;
+
+    /* --- MARGIN/PADDING SETTINGS --- */
+    padding-top: 1px;    /* Isse text upar se niche aayega (Badhayenge toh niche jayega) */
+    padding-bottom: 1px;  /* Niche ki jagah */
+    padding-left: 1px;   /* Left side ki jagah */
+    
+    display: block;
+    box-sizing: border-box;
+}
+
+
+.goods-table tr {
+    height: 30px;
+}
+
+.goods-table td {
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+
+/* Sidebar Amount Table Fix */
+/* Sidebar Amount Table ko clickable banane ke liye use 'z-index' dein */
+.amount-table-container {
+    flex: 0 0 180px; 
+    position: relative; /* Z-index ke liye zaroori hai */
+    z-index: 999;       /* Isse ye signature ya footer ke upar rahega */
+    border-left: 2px solid var(--primary-blue);
+    padding-left: 5px;
+}
+
+
+/* 2. Table ke cells ki Unchai (Height) choti karne ke liye */
+.nested-amount-table td {
+    padding: 2px 8px; /* Padding kam ki gayi hai */
+    border: 1px solid #eee;
+    height: 32px;    /* Height ko 45px se kam karke 32px kar diya */
+    font-size: 0.8em; /* Text thoda chota kiya taaki fit ho jaye */
+}
+
+/* 3. Input boxes ko compact banane ke liye */
+.nested-amount-table input {
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    border: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    outline: none;
+    background: #fff !important; /* White background taaki cursor dikhe */
+    cursor: text !important;     /* Cursor ko typing mode mein force karein */
+    pointer-events: auto !important; /* Click allow karne ke liye */
+}
+
+/* Freight, Total aur To Pay rows ki height bhi check karein */
+.total-highlight, .to-pay-row {
+    height: 35px; /* Inhe baaki se thoda sa bada rakha hai highlights ke liye */
+}
+
+/* Advanced box ko khas taur par clickable rakhein */
+#advanced {
+    background-color: #ffffff !important;
+    pointer-events: auto !important;
+}
+
+/* Buttons */
+.btn-add-row {
+    margin-top: 10px;
+    padding: 5px 15px;
+    background: var(--success-green);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+:root {
+    --primary-blue: #2a6ce4;
+    --light-blue: #e0efff;
+    --dark-grey: #333333;
+    --medium-grey: #666666;
+    --light-grey: #cccccc;
+    --extra-light-grey: #f0f2f5;
+    --white: #ffffff;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--extra-light-grey);
+    display: flex;
+    justify-content: center;
+}
+
+/* Landscape A4 Fix */
+.container {
+    background: var(--white);
+    padding: 8mm;
+    width: 285mm; /* Landscape Width */
+    height: 195mm; /* Landscape Height - Isse zyada nahi jayega */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Scroll/Second page block karne ke liye */
+}
+
+/* Header Compact */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary-blue);
+    padding-bottom: 5px;
+}
+
+.logo { max-width: 90px; } /* Chota logo */
+
+.header-center { text-align: center; flex: 5.2; }
+.atc-initials { font-size: 3.8em; font-weight: 900; margin: 0; letter-spacing: 8px; line-height: 1; color: var(--primary-blue); }
+.company-name { font-weight: bold; font-size: 1.4em; margin: 0; }
+.tagline { font-size: 0.8em; color: var(--medium-grey); margin: 0px 0; font-weight: bold; }
+.pod-instruction {
+    width: 100%;
+    font-size: 0.65em;
+    font-style: italic;
+    color: #f03b3b;
+    font-weight: bold;
+    margin-top: -35px;
+
+    /* --- TEXT ALIGNMENT SETTINGS --- */
+    text-align: left; /* Beech mein rakhne ke liye */
+    /* text-align: left; */   /* Baye (Left) karne ke liye */
+    /* text-align: right; */  /* Daye (Right) karne ke liye */
+
+    /* Agar Left ya Right kar rahe hain, toh kinaro se thodi jagah (Padding) de dein */
+    padding-left: 00px;  
+    padding-right: 15px;
+}
+
+/* Purani demurrage-note wali style delete karein aur ise add karein */
+
+.legal-note {
+    width: 100%;
+    text-align: left;
+    font-size: 0.69em; /* Chota font size */
+    font-weight: bold;
+    color: #e1ad01; /* Dark Golden Yellow (Taaki white paper par dikhe) */
+    margin-top: 3px;
+    background: transparent; /* No Highlight */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Print settings mein bhi update karein */
+@media print {
+    .legal-note {
+        color: #e1ad01 !important;
+        -webkit-print-color-adjust: exact;
+        margin-top: 3px !important;
+    }
+}
+
+/* Baki margins jo aapne set kiye hain wo waise hi rahenge */
+.header-right {
+    flex: 0 0 auto;       /* Isse container text ke hisaab se jagah lega */
+    text-align: right;
+    line-height: 1.3;
+    white-space: nowrap;  /* Sabse important: Isse text ek hi line mein rahega, tootega nahi */
+    
+    /* --- SLIDE KARNE KE LIYE YAHAN CHANGE KAREIN --- */
+    margin-right: 10px;   /* Is number ko badhayenge (e.g. 40px) toh ye LEFT ki taraf slide hoga */
+    /* margin-right: 0px; */ /* Isse ye bilkul RIGHT edge se chipak jayega */
+}
+
+.header-right p {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.header-right .contact-person {
+    font-size: 1.05em;    /* Name ko thoda bada aur saaf dikhane ke liye */
+    margin-bottom: 3px;
+}
+.contact-person { font-weight: bold; font-size: 1em; margin-bottom: 0px; }
+
+/* Bands Compact */
+.daily-service-full-width-band, .aurangabad-office-full-width-band {
+    width: 100%;
+    text-align: center;
+    padding: 3px;
+    font-size: 0.78em;
+    font-weight: 600;
+    border: 1px solid #eee;
+}
+.daily-service-full-width-band { background: var(--light-blue); margin-top: 2px; }
+.aurangabad-office-full-width-band { background: #f9f9f9; margin-bottom: 5px; }
+
+/* Grid Details */
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 8px;
+}
+.grid-item { border: 1px solid var(--light-grey); padding: 4px 6px; border-radius: 4px; }
+.grid-item.span-2 { grid-column: span 2; }
+.grid-item label { display: block; font-size: 0.6em; font-weight: bold; color: var(--medium-grey); text-transform: uppercase; }
+.grid-item input { width: 100%; border: none; outline: none; font-size: 0.9em; font-weight: bold; background: transparent; }
+
+/* Consignor/Consignee */
+.contact-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    /* --- ऊपर-नीचे स्लाइड करने के लिए --- */
+    margin-top: 00px;   /* प्लस (+) नंबर से बॉक्स NICHE खिसकेगा */
+    /* margin-top: -10px; */ /* माइनस (-) नंबर से बॉक्स UPAR खिसकेगा */
+    
+    margin-bottom: 0px;
+}
+.contact-info label { font-weight: bold; font-size: 0.75em; display: block; margin-bottom: 2px; }
+.contact-info textarea {
+    width: 100%; 
+    
+    /* --- बॉक्स की ऊंचाई (Height) --- */
+    height: 70px;      /* इसे 100px या 120px करेंगे तो बॉक्स बड़ा हो जाएगा */
+    
+    /* --- अंदर के टेक्स्ट का साइज --- */
+    font-size: 1.0em;  /* इसे 1.5em करेंगे तो टेक्स्ट और बड़ा दिखेगा */
+    font-weight: bold; /* टेक्स्ट को गहरा (Bold) रखने के लिए */
+    
+    padding: 8px;
+    border: 1px solid var(--light-grey);
+    border-radius: 4px;
+    resize: none;
+    box-sizing: border-box;
+}
+
+/* Table Section side-by-side */
+.main-content-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    /* Height ko fix na rakhein, ise content ke sath badhne dein */
+    height: auto !important; 
+    min-height: 0;
+}
+.goods-table-container { flex: 3; }
+.amount-table-container { flex: 1; }
+
+.goods-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.goods-table th, .goods-table td { border: 1px solid var(--light-grey); padding: 5px; font-size: 0.8em; }
+.goods-table th { background: var(--light-blue); }
+
+/* Amount Sidebar */
+.nested-amount-table { width: 100%; border-collapse: collapse; border: 1px solid var(--light-grey); }
+.nested-amount-table td { padding: 4px 8px; border: 1px solid #eee; font-size: 0.85em; }
+.nested-amount-table input { width: 100%; text-align: right; border: none; font-weight: bold; outline: none; font-size: 1em; }
+.total-highlight { background: #f0f7ff; }
+.to-pay-row { background: #fff4f4; border-top: 2px solid #d9534f !important; font-weight: bold; }
+
+/* Footer Compact */
+.footer-details { 
+    display: grid; 
+    grid-template-columns: 1.2fr 1.5fr 1fr; 
+    gap: 10px; 
+    margin-top: 140px;
+    padding-top: 5px;
+   /* border-top: 1px dashed #ccc;*/
+}
+.bank-info, .terms-conditions {
+    border: 1px solid var(--light-grey);
+    padding: 10px;
+    border-radius: 4px;
+    background: #fff;
+    
+    /* --- HEIGHT KO CONTROL KARNE KE LIYE --- */
+    /* Agar chota karna hai toh 80px karein, bada karna hai toh 150px */
+    height: 105px !important; 
+    
+    /* Agar text box se bahar nikal raha hai toh overflow hide karein */
+    overflow: hidden; 
+    
+    /* --- TEXT SIZE --- */
+    font-size: 0.6em !important; 
+}
+
+/* Heading ka size set karne ke liye */
+.terms-heading {
+    font-weight: bold;
+    font-size: 1em !important;
+    margin-bottom: 3px;
+    display: block;
+    border-bottom: 1px solid #eee;
+}
+.terms-conditions ol { padding-left: 15px; margin: 0; }
+
+.signature-section {
+    text-align: center;
+    flex: 1; /* Column mein space lene ke liye */
+
+    /* --- SLIDE KARNE KE LIYE YAHAN CHANGE KAREIN --- */
+    margin-top: 100px;    /* Is number ko badhayenge (e.g. 40px) toh ye NICHE jayega */
+    /* margin-top: -10px; */ /* Minus (-) mein karenge toh ye UPAR jayega */
+}
+.signature-box { border-bottom: 1px solid #000; width: 100%; height: 35px; margin-bottom: 2px; }
+.signature-section p { font-size: 0.8em; font-weight: bold; margin: 0; }
+
+/* --- UPDATED PRINT SETTINGS --- */
+@media print {
+    @page { 
+        size: landscape; 
+        margin: 0; /* Browser margins ko zero kiya */
+    }
+    
+    body { 
+        padding: 0; 
+        margin: 0; 
+        background: white;
+        -webkit-print-color-adjust: exact !important; /* Colors ko force print karne ke liye */
+        print-color-adjust: exact !important;
+    }
+
+    .container { 
+        width: 297mm; /* Full A4 Landscape Width */
+        height: 210mm; /* Full A4 Landscape Height */
+        padding: 8mm; 
+        box-shadow: none; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+        border: none;
+    }
+
+    /* Table aur containers ke borders screen jaise rakhein */
+    .goods-table th, .goods-table td, .grid-item, .bank-info, .terms-conditions, .nested-amount-table td {
+        border: 1px solid #ccc !important; /* Black ki jagah grey border */
+    }
+
+    /* Background colors ko print mein dikhane ke liye */
+    .daily-service-full-width-band { background-color: #e0efff !important; }
+    .aurangabad-office-full-width-band { background-color: #f9f9f9 !important; }
+    .goods-table th { background-color: #e0efff !important; }
+    .total-highlight { background-color: #f0f7ff !important; }
+    .to-pay-row { background-color: #fff4f4 !important; }
+
+    /* Footer aur Signature ko screen jaise align karein */
+    .footer-details {
+        margin-top: 140px !important; /* Screen wala same margin */
+        display: grid !important;
+        grid-template-columns: 1.2fr 1.5fr 1fr !important;
+    }
+
+    .signature-section {
+        margin-top: 100px !important; /* Screen wala same margin */
+    }
+
+    /* Bottom notes ki position fix karein */
+    .pod-instruction, .legal-note {
+        position: relative !important;
+        margin-top: 5px !important;
+    }
+
+    /* Buttons ko print se hatayein */
+    .controls, .btn-add-row, #addGoodsRowBtn { 
+        display: none !important; 
+    }
+
+    /* Input fields ka border hatayein taaki saaf dikhe */
+    input, textarea {
+        border: none !important;
+        background: transparent !important;
+    }
+}
+
+.controls { position: fixed; bottom: 20px; right: 20px; }
+.btn-primary { padding: 10px 20px; background: var(--primary-blue); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+/* FROM aur TO boxes ko side-by-side set karne ke liye */
+.location-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Do barabar hisse */
+    gap: 8px;
+    
+    /* --- ISSE BOXES NICHE KHALI JAGAH MEIN SLIDE HONGE --- */
+    margin-top: 05px; 
+    margin-bottom: 05px;
+}
+
+/* Boxes ki height thodi badhane ke liye (Optional) */
+.location-row .grid-item {
+    border: 1px solid var(--light-grey);
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.location-row input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #000;
+    margin-top: 2px;
+}
+
+/* --- PRINT VIEW FIX --- */
+@media print {
+    .location-row {
+        margin-top: 05px !important;
+        margin-bottom: 05px !important;
+        display: grid !important;
+    }
+}
+
+/* Table ke andar Remark ko set karne ke liye */
+.remark-row td {
+    padding: 0 !important;
+    border-top: 2px solid var(--light-grey) !important;
+    background-color: #f9f9f9;
+}
+
+.remark-content {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+}
+
+.remark-content label {
+    font-size: 0.65em;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.remark-content textarea {
+    width: 100%;
+    height: 60px; /* Remark area ki height */
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-size: 1.2em;
+    font-weight: bold;
+    font-family: inherit;
+    color: #333;
+    padding: 0;
+}
+
+/* Print mein border saaf dikhne ke liye */
+@media print {
+    .remark-row td {
+        border: 1px solid #000 !important;
+    }
+}
+
+.remark-textarea {
+    font-size: 2.0em !important; /* Bada text size */
+    font-weight: bold !important;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    display: block;
+}
+
+#toPay {
+    text-align: right;
+    padding-right: 10px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    /* Isse text bada aur saaf dikhega */
+    letter-spacing: 0.5px; 
+}

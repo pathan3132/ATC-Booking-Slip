@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATC - Booking Slip (Landscape)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <div class="container" id="bookingSlip">
+   <header>
+    <div class="header-left">
+        <img src="images/ATC_Logo.png" alt="ATC Logo" class="logo">
+    </div>
+    
+    <div class="header-center">
+        <h1 class="atc-initials">ATC</h1>
+        <h2 class="company-name">ALLINDIA TRANSPORT COMPANY</h2>
+        <p class="tagline">TRUCK OWNER, LORRY SUPPLIER & COMMISSION AGENT</p>
+    </div>
+    
+    <div class="header-right">
+        <p class="contact-person"><span class="label">Prop:</span> MA. MUNNA BHAI</p>
+        <p class="contact-number"><span class="label">MOB:</span> 9797977098</p>
+        <p class="contact-number"><span class="label">OFC:</span> 8888664019</p>
+    </div>
+</header>
+
+    <div class="daily-service-full-width-band">
+        DAILY SERVICE: UP, DELHI, HARIYANA, PUNJAB, J&K, BIHAR, WB, ASSAM, ODISHA, KA, GUJARAT, AGARTALA & ALL INDIA
+    </div>
+    <div class="aurangabad-office-full-width-band">
+        AURANGABAD OFFICE: Solapur-Dhule Road, Gut No. 102, Fatiyabad Opp. Nayra Petroleum, Aurangabad. MH-431002
+    </div>
+
+    <div class="section-grid">
+        <div class="grid-item">
+            <label>L.R. NO.</label>
+            <input type="text" id="lrNo" readonly>
+        </div>
+        <div class="grid-item span-2" style="background: #f0f7ff; text-align:center; display:flex; align-items:center; justify-content:center;">
+            <p style="margin:0; font-weight:bold; color:var(--primary-blue); font-size:0.85em;">BOOKED AT OWNER'S RISK</p>
+        </div>
+        <div class="grid-item">
+            <label>Date</label>
+            <input type="date" id="date">
+        </div>
+        <div class="grid-item span-2"> 
+            <label>TRUCK No.</label>
+            <input type="text" id="truckNo" placeholder="MH 20 AB 1234">
+        </div>
+    </div>
+
+    <div class="location-row">
+        <div class="grid-item">
+            <label>FROM (Origin)</label>
+            <input type="text" id="fromLoc" placeholder="Enter Origin">
+        </div>
+        <div class="grid-item">
+            <label>TO (Destination)</label>
+            <input type="text" id="toLoc" placeholder="Enter Destination">
+        </div>
+    </div>
+
+    <div class="contact-info">
+        <div class="consignor-details">
+            <label>Consignor's Name & Address:</label>
+            <textarea id="consignor"></textarea>
+        </div>
+        <div class="consignee-details">
+            <label>Consignee Name & Address:</label>
+            <textarea id="consignee"></textarea>
+        </div>
+    </div>
+
+    <div class="main-content-row">
+<div class="goods-table-container">
+    <table class="goods-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Name of Goods</th>
+                <th style="width: 15%;">Pkg</th>
+                <th style="width: 15%;">Weight (Kgs)</th>
+                <th style="width: 15%;">Rate per T</th>
+                <th style="width: 30%;">Remark</th> <!-- 5th Column -->
+            </tr>
+        </thead>
+        <tbody id="goodsTableBody">
+            <!-- Rows added by JS -->
+        </tbody>
+    </table>
+    <button id="addGoodsRowBtn" class="btn-add-row" style="margin-top:10px;">+ Add More Material</button>
+</div>
+
+        <div class="amount-table-container">
+            <table class="nested-amount-table">
+                <tr><td class="charge-label">Freight</td><td><input type="text" id="freightRate" class="money" value="0"></td></tr>
+<tr><td class="charge-label">Hamali</td><td><input type="text" id="hamali" class="money" value="0"></td></tr>
+<tr><td class="charge-label">Reward/Other</td><td><input type="text" id="reward" class="money" value="0"></td></tr>
+<tr><td class="charge-label">Bilti Charges</td><td><input type="text" id="biltiChares" class="money" value="0"></td></tr>
+<tr class="total-highlight"><td class="charge-label">Total Amount</td><td><input type="text" id="totalAmount" class="money" readonly></td></tr>
+<tr><td class="charge-label">Advanced</td><td><input type="text" id="advanced" class="money" value="0"></td></tr>
+<tr class="to-pay-row"><td class="charge-label">TO PAY</td><td><input type="text" id="toPay" class="money" readonly></td></tr>
+
+            </table>
+        </div>
+    </div>
+
+    <div class="footer-details">
+        <div class="bank-info">
+            <p class="terms-heading">BANK DETAILS</p>
+            <p>PAN: AATAA8635M | A/c: 50200111576931</p>
+            <p>HDFC Bank, Vidya Narayan Nagar, A.bad.</p>
+            <p>IFSC: HDFC0008604</p>
+        </div>
+        <div class="terms-conditions">
+            <p class="terms-heading">TERMS & CONDITIONS</p>
+            <ol>
+                <li>No responsibility for damage by rain, fire, theft, accident.</li>
+                <li>Responsibility of the goods lies with lorry owner & driver.</li>
+                <li>Claims must be notified within 7 days, check all paper before loading</li>
+                <li>Handover all concerned document to driver, Guide Driver properly for unloading</li>
+            </ol>
+        </div>
+        <div class="signature-section">
+            <div class="signature-box"></div>
+            <p>Authorized Signature</p>
+        </div>
+    </div>
+
+    <div class="pod-instruction">
+        Note: Send Original Receiving (POD) at: ATC Munna Bhai PF 2115 Shahjhapur Karodi, DTDC Courier Aurangabad 431136 (MH) | Mob: 8830464553
+    </div>
+     <div class="legal-note">
+        Do not divert, re-route, or re-book without consignor's written permission; deliver only to destination.
+    </div>
+</div>
+
+<div class="controls">
+    <button type="button" onclick="handlePrint()" class="btn btn-primary">Print Landscape Slip</button>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
