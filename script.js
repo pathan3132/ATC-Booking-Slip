@@ -1,8 +1,55 @@
+// --- 1. LOGIN SYSTEM LOGIC (GLOBAL FUNCTIONS) ---
+
+// Password Verify karne ka function
+window.verifyLogin = () => {
+    const passInput = document.getElementById('entryPass');
+    const errorMsg = document.getElementById('loginError');
+    const overlay = document.getElementById('loginOverlay');
+    const mainApp = document.getElementById('bookingSlip');
+    const controls = document.querySelector('.controls');
+
+    if (passInput.value === "1234") {
+        sessionStorage.setItem('atc_logged_in', 'true');
+        overlay.style.display = 'none';
+        mainApp.style.display = 'flex';
+        if(controls) controls.style.display = 'block';
+    } else {
+        errorMsg.style.display = 'block';
+        passInput.style.borderColor = 'red';
+        passInput.value = '';
+        passInput.focus();
+    }
+};
+
+// Enter key press handle karne ke liye
+window.handleLoginKeyPress = (event) => {
+    if (event.key === "Enter") {
+        verifyLogin();
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    // --- 2. AUTHENTICATION CHECK ON LOAD ---
+    const isAuthenticated = sessionStorage.getItem('atc_logged_in');
+    const overlay = document.getElementById('loginOverlay');
+    const mainApp = document.getElementById('bookingSlip');
+    const controls = document.querySelector('.controls');
+
+    if (isAuthenticated === 'true') {
+        if(overlay) overlay.style.display = 'none';
+        mainApp.style.display = 'flex';
+        if(controls) controls.style.display = 'block';
+    } else {
+        // App ko chhupa kar rakhein jab tak login na ho
+        mainApp.style.display = 'none';
+        if(controls) controls.style.display = 'none';
+    }
+
+    // --- 3. BAKI SAARE APP FUNCTIONS ---
     const goodsTableBody = document.getElementById('goodsTableBody');
     const addRowBtn = document.getElementById('addGoodsRowBtn');
 
-    // --- 1. INDIAN CURRENCY FORMATTING LOGIC ---
+    // Indian Currency Formatting
     const formatIndianNumber = (num) => {
         if (num === null || num === undefined || isNaN(num)) return "0.00";
         return parseFloat(num).toLocaleString('en-IN', {
@@ -27,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- 2. CALCULATION LOGIC ---
+    // Calculation Logic
     window.calculate = () => {
         let autoFreight = 0;
         const rows = goodsTableBody.querySelectorAll('tr');
@@ -55,32 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('totalAmount').value = formatIndianNumber(total);
 
-       // --- TBB SECURITY LOGIC FOR TO PAY ---
-    const toPayField = document.getElementById('toPay');
-
-    if (toPay <= 0) {
-        toPayField.value = "TBB BILL AT"; 
-        toPayField.style.color = "red";   
-        toPayField.style.fontWeight = "900"; 
-        
-        // NAYA BADLAV: Text ke liye class aur style adjust karein
-        toPayField.classList.add('tbb-text-active');
-    } else {
-        toPayField.value = formatIndianNumber(toPay); 
-        toPayField.style.color = "black"; 
-        toPayField.style.fontWeight = "bold";
-        
-        // NAYA BADLAV: Number ke liye normal style
-        toPayField.classList.remove('tbb-text-active');
-    }
+        const toPayField = document.getElementById('toPay');
+        if (toPay <= 0) {
+            toPayField.value = "TBB BILL AT"; 
+            toPayField.style.color = "red";   
+            toPayField.style.fontWeight = "900"; 
+            toPayField.classList.add('tbb-text-active');
+        } else {
+            toPayField.value = formatIndianNumber(toPay); 
+            toPayField.style.color = "black"; 
+            toPayField.style.fontWeight = "bold";
+            toPayField.classList.remove('tbb-text-active');
+        }
     };
 
-    // --- 3. PAGE INITIALIZATION & LR GENERATION ---
+    // Page Initialization
     const setDate = () => {
         document.getElementById('date').valueAsDate = new Date();
     };
 
-    // Yahan window attach kiya hai taaki clear logic mein work kare
     window.generateLR = () => {
         let counter = localStorage.getItem('atc_lr_counter');
         if (!counter) {
@@ -110,22 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- 4. VALIDATION & PDF GENERATION ---
+    // PDF Generation
     window.handlePrint = () => {
         const lrNoVal = document.getElementById('lrNo').value;
         const truckNoInp = document.getElementById('truckNo');
         const truckNoVal = truckNoInp.value.trim();
-        const fromLoc = document.getElementById('fromLoc');
-        const toLoc = document.getElementById('toLoc');
-        const consignor = document.getElementById('consignor');
-        const consignee = document.getElementById('consignee');
-
+        
         const fields = [
             { el: truckNoInp, name: "Truck Number" },
-            { el: fromLoc, name: "Origin (From)" },
-            { el: toLoc, name: "Destination (To)" },
-            { el: consignor, name: "Consignor" },
-            { el: consignee, name: "Consignee" }
+            { el: document.getElementById('fromLoc'), name: "Origin" },
+            { el: document.getElementById('toLoc'), name: "Destination" },
+            { el: document.getElementById('consignor'), name: "Consignor" },
+            { el: document.getElementById('consignee'), name: "Consignee" }
         ];
 
         let isValid = true;
@@ -143,34 +179,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // PDF Generation
         const element = document.getElementById('bookingSlip');
         const fileName = `LR_${lrNoVal}_${truckNoVal}.pdf`;
 
         const opt = {
-            margin: [5, 5, 5, 5],
+            margin: [2, 2, 2, 2],
             filename: fileName,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 3, useCORS: true, logging: false, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
 
-        // Saving PDF and updating values
         html2pdf().from(element).set(opt).save().then(() => {
-            // 1. Increment Counter in LocalStorage
             let currentCounter = parseInt(localStorage.getItem('atc_lr_counter')) || 500;
             localStorage.setItem('atc_lr_counter', currentCounter + 1);
 
-            // 2. Success Message
             alert("Booking slip generated successfully!");
 
-            // 3. Clear fields and update LR UI
             setTimeout(() => {
-                truckNoInp.value = '';
-                fromLoc.value = '';
-                toLoc.value = '';
-                consignor.value = '';
-                consignee.value = '';
+                ['truckNo', 'fromLoc', 'toLoc', 'consignor', 'consignee'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
 
                 ['freightRate', 'hamali', 'reward', 'biltiChares', 'advanced'].forEach(id => {
                     document.getElementById(id).value = "0.00";
@@ -181,16 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const toPayField = document.getElementById('toPay');
                 toPayField.value = "TBB BILL AT";
                 toPayField.style.color = "red";
+                toPayField.classList.add('tbb-text-active');
 
                 goodsTableBody.innerHTML = '';
-                window.addRow(); // Add one fresh row
-                window.generateLR(); // Ab LR number refresh ho jayega
-                setDate(); // Date reset
+                window.addRow();
+                window.generateLR();
+                setDate();
             }, 500);
         });
     };
 
-    // --- 5. EVENT LISTENERS ---
+    // Initialize UI
     setDate();
     window.generateLR();
     window.addRow();
