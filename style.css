@@ -525,11 +525,19 @@ header {
 
 #toPay {
     text-align: right;
-    padding-right: 10px;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    /* Isse text bada aur saaf dikhega */
-    letter-spacing: 0.5px; 
+    font-size: 1.1em;
+    padding-right: 8px;
+    width: 100%;
 }
+
+#toPay.tbb-text-active {
+    text-align: center !important;
+    font-size: 0.68em !important; /* Thoda aur chota taaki PDF mein fit ho */
+    padding-right: 0 !important;
+    color: red !important;
+    font-weight: 900 !important;
+}
+
 
 /* --- SIGNATURE SECTION FIX --- */
 .signature-section {
