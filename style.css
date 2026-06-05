@@ -164,7 +164,7 @@ header {
     padding-bottom: 5px;
 }
 
-.logo { max-width: 90px; } /* Chota logo */
+.logo { max-width: 105px; } /* Chota logo */
 
 .header-center { text-align: center; flex: 5.2; }
 .atc-initials { font-size: 3.8em; font-weight: 900; margin: 0; letter-spacing: 8px; line-height: 1; color: var(--primary-blue); }
@@ -529,4 +529,77 @@ header {
     font-family: 'Segoe UI', Arial, sans-serif;
     /* Isse text bada aur saaf dikhega */
     letter-spacing: 0.5px; 
+}
+
+/* --- SIGNATURE SECTION FIX --- */
+.signature-section {
+    text-align: center;
+    position: relative; /* Image positioning ke liye zaroori hai */
+    width: 200px;       /* Ek fix width taaki alignment sahi rahe */
+    margin-left: auto;  /* Right side mein align karne ke liye */
+    margin-top: 95px;   /* Sidebar table se thodi doori */
+}
+
+.signature-box {
+    border-bottom: 2px solid #000; /* Signature line */
+    width: 100%;
+    height: 40px;
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.auth-sign-img {
+    position: absolute;
+    bottom: 0px;       /* Line se 2px upar */
+    left: 50%;         /* Center mein lane ke liye */
+    transform: translateX(-50%); /* Bilkul center alignment fix */
+    max-height: 50px;  /* Sign ka size thoda bada karne ke liye */
+    width: auto;
+    display: block;
+    mix-blend-mode: multiply; /* White background hatane ke liye */
+    pointer-events: none;     /* Isse box click karne mein dikkat nahi hogi */
+}
+
+.signature-section p {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+/* Print View Fix */
+@media print {
+    .auth-sign-img {
+        display: block !important;
+        -webkit-print-color-adjust: exact;
+    }
+    .signature-section {
+        margin-top: 100px !important; /* Print mein thoda niche slide karne ke liye */
+    }
+}
+
+/* Normal state (Jab numbers honge) */
+#toPay {
+    text-align: right;
+    font-size: 1.1em;
+    padding-right: 10px;
+    transition: all 0.2s ease;
+}
+
+/* Jab "TBB BILL AT" text active hoga (Tension free auto-fit) */
+#toPay.tbb-text-active {
+    text-align: center !important;  /* Center align taaki cut na ho */
+    font-size: 0.75em !important;   /* Font size chota kiya taaki box mein fit ho */
+    padding-right: 0 !important;    /* Padding zero taaki poori jagah mile */
+    letter-spacing: 0px !important;
+}
+
+/* Print ke waqt bhi text clear dikhne ke liye */
+@media print {
+    #toPay.tbb-text-active {
+        text-align: center !important;
+        font-size: 0.75em !important;
+        color: red !important;
+        -webkit-print-color-adjust: exact;
+    }
 }

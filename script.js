@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const addRowBtn = document.getElementById('addGoodsRowBtn');
 
     // --- 1. INDIAN CURRENCY FORMATTING LOGIC ---
-
-    // Number ko "30,000.00" format mein badalne ke liye
     const formatIndianNumber = (num) => {
         if (num === null || num === undefined || isNaN(num)) return "0.00";
         return parseFloat(num).toLocaleString('en-IN', {
@@ -13,78 +11,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Formatted string (30,000.00) se wapas number nikalne ke liye
     const getRawNumber = (val) => {
         if (!val) return 0;
-        // String se comma hata kar number mein badle
         return parseFloat(val.toString().replace(/,/g, '')) || 0;
     };
 
-    // Input fields par formatting apply karne ke liye
     const applyFormatting = (el) => {
         el.addEventListener('blur', (e) => {
             let raw = getRawNumber(e.target.value);
             e.target.value = formatIndianNumber(raw);
         });
-
         el.addEventListener('focus', (e) => {
             let raw = getRawNumber(e.target.value);
-            // Type karte waqt comma hata dein
             e.target.value = raw !== 0 ? raw : "";
         });
     };
 
     // --- 2. CALCULATION LOGIC ---
+    window.calculate = () => {
+        let autoFreight = 0;
+        const rows = goodsTableBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const weight = getRawNumber(row.querySelector('.weight-input')?.value);
+            const rate = getRawNumber(row.querySelector('.rate-input')?.value);
+            if (weight > 0 && rate > 0) {
+                autoFreight += (weight / 1000) * rate;
+            }
+        });
 
-   window.calculate = () => {
-    let autoFreight = 0;
-    const rows = goodsTableBody.querySelectorAll('tr');
-    
-    rows.forEach(row => {
-        const weight = getRawNumber(row.querySelector('.weight-input')?.value);
-        const rate = getRawNumber(row.querySelector('.rate-input')?.value);
-        if (weight > 0 && rate > 0) {
-            autoFreight += (weight / 1000) * rate;
+        if (autoFreight > 0) {
+            document.getElementById('freightRate').value = formatIndianNumber(autoFreight);
         }
-    });
 
-    if (autoFreight > 0) {
-        document.getElementById('freightRate').value = formatIndianNumber(autoFreight);
-    }
+        const freight = getRawNumber(document.getElementById('freightRate').value);
+        const hamali = getRawNumber(document.getElementById('hamali').value);
+        const reward = getRawNumber(document.getElementById('reward').value);
+        const bilti = getRawNumber(document.getElementById('biltiChares').value);
+        const advance = getRawNumber(document.getElementById('advanced').value);
 
-    const freight = getRawNumber(document.getElementById('freightRate').value);
-    const hamali = getRawNumber(document.getElementById('hamali').value);
-    const reward = getRawNumber(document.getElementById('reward').value);
-    const bilti = getRawNumber(document.getElementById('biltiChares').value);
-    const advance = getRawNumber(document.getElementById('advanced').value);
+        const total = freight + hamali + reward + bilti;
+        const toPay = total - advance;
 
-    const total = freight + hamali + reward + bilti;
-    const toPay = total - advance;
+        document.getElementById('totalAmount').value = formatIndianNumber(total);
 
-    // Total Amount formatting
-    document.getElementById('totalAmount').value = formatIndianNumber(total);
-
-    // --- TBB SECURITY LOGIC FOR TO PAY ---
+       // --- TBB SECURITY LOGIC FOR TO PAY ---
     const toPayField = document.getElementById('toPay');
 
     if (toPay <= 0) {
-        toPayField.value = "TBB BILL AT"; // Text to show
-        toPayField.style.color = "red";   // Red color for security
-        toPayField.style.fontWeight = "900"; // Extra Bold
+        toPayField.value = "TBB BILL AT"; 
+        toPayField.style.color = "red";   
+        toPayField.style.fontWeight = "900"; 
+        
+        // NAYA BADLAV: Text ke liye class aur style adjust karein
+        toPayField.classList.add('tbb-text-active');
     } else {
-        toPayField.value = formatIndianNumber(toPay); // Show real value
-        toPayField.style.color = "black"; // Normal color
+        toPayField.value = formatIndianNumber(toPay); 
+        toPayField.style.color = "black"; 
         toPayField.style.fontWeight = "bold";
+        
+        // NAYA BADLAV: Number ke liye normal style
+        toPayField.classList.remove('tbb-text-active');
     }
-};
+    };
 
-    // --- 3. PAGE INITIALIZATION ---
-
+    // --- 3. PAGE INITIALIZATION & LR GENERATION ---
     const setDate = () => {
         document.getElementById('date').valueAsDate = new Date();
     };
 
-    const generateLR = () => {
+    // Yahan window attach kiya hai taaki clear logic mein work kare
+    window.generateLR = () => {
         let counter = localStorage.getItem('atc_lr_counter');
         if (!counter) {
             counter = 500;
@@ -107,85 +104,97 @@ document.addEventListener('DOMContentLoaded', () => {
         const wInp = tr.querySelector('.weight-input');
         const rInp = tr.querySelector('.rate-input');
 
-        // New row ke liye events
         [wInp, rInp].forEach(inp => {
             inp.addEventListener('input', calculate);
             applyFormatting(inp);
         });
     };
 
-    // --- 4. VALIDATION & PRINT LOGIC ---
-
+    // --- 4. VALIDATION & PDF GENERATION ---
     window.handlePrint = () => {
-        // Fields to validate
-        const truckNo = document.getElementById('truckNo');
+        const lrNoVal = document.getElementById('lrNo').value;
+        const truckNoInp = document.getElementById('truckNo');
+        const truckNoVal = truckNoInp.value.trim();
         const fromLoc = document.getElementById('fromLoc');
         const toLoc = document.getElementById('toLoc');
         const consignor = document.getElementById('consignor');
         const consignee = document.getElementById('consignee');
 
         const fields = [
-            { el: truckNo, name: "Truck Number" },
+            { el: truckNoInp, name: "Truck Number" },
             { el: fromLoc, name: "Origin (From)" },
             { el: toLoc, name: "Destination (To)" },
-            { el: consignor, name: "Consignor Details" },
-            { el: consignee, name: "Consignee Details" }
+            { el: consignor, name: "Consignor" },
+            { el: consignee, name: "Consignee" }
         ];
 
         let isValid = true;
-        let missing = "";
-
         fields.forEach(f => {
             if (!f.el.value.trim()) {
                 f.el.style.border = "2px solid red";
-                if (isValid) { missing = f.name; isValid = false; }
+                isValid = false;
             } else {
                 f.el.style.border = "";
             }
         });
 
         if (!isValid) {
-            alert("Kripya karke ye jankari bharein: " + missing);
+            alert("Kripya sabhi fields bharein!");
             return;
         }
 
-        // Print page
-        window.print();
+        // PDF Generation
+        const element = document.getElementById('bookingSlip');
+        const fileName = `LR_${lrNoVal}_${truckNoVal}.pdf`;
 
-        // Increment LR Counter
-        let currentCounter = parseInt(localStorage.getItem('atc_lr_counter'));
-        localStorage.setItem('atc_lr_counter', currentCounter + 1);
+        const opt = {
+            margin: [5, 5, 5, 5],
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
 
-        // Clear Fields after print
-       // Inside handlePrint -> setTimeout
-        setTimeout(() => {
-            // ... (other clear logic) ...
+        // Saving PDF and updating values
+        html2pdf().from(element).set(opt).save().then(() => {
+            // 1. Increment Counter in LocalStorage
+            let currentCounter = parseInt(localStorage.getItem('atc_lr_counter')) || 500;
+            localStorage.setItem('atc_lr_counter', currentCounter + 1);
 
-            ['freightRate', 'hamali', 'reward', 'biltiChares', 'advanced'].forEach(id => {
-                document.getElementById(id).value = "0.00";
-            });
-            
-            document.getElementById('totalAmount').value = "0.00";
-            
-            // RESET TO PAY TO TBB
-            const toPayField = document.getElementById('toPay');
-            toPayField.value = "TBB BILL AT";
-            toPayField.style.color = "red";
+            // 2. Success Message
+            alert("Booking slip generated successfully!");
 
-            goodsTableBody.innerHTML = '';
-            addRow();
-            generateLR();
-        }, 1000);
+            // 3. Clear fields and update LR UI
+            setTimeout(() => {
+                truckNoInp.value = '';
+                fromLoc.value = '';
+                toLoc.value = '';
+                consignor.value = '';
+                consignee.value = '';
+
+                ['freightRate', 'hamali', 'reward', 'biltiChares', 'advanced'].forEach(id => {
+                    document.getElementById(id).value = "0.00";
+                });
+                
+                document.getElementById('totalAmount').value = "0.00";
+                
+                const toPayField = document.getElementById('toPay');
+                toPayField.value = "TBB BILL AT";
+                toPayField.style.color = "red";
+
+                goodsTableBody.innerHTML = '';
+                window.addRow(); // Add one fresh row
+                window.generateLR(); // Ab LR number refresh ho jayega
+                setDate(); // Date reset
+            }, 500);
+        });
     };
 
-    // --- 5. EVENT LISTENERS ATTACHMENT ---
-
-    // Initial load
+    // --- 5. EVENT LISTENERS ---
     setDate();
-    generateLR();
-    addRow();
+    window.generateLR();
+    window.addRow();
 
-    // Sidebar fields par formatting aur calculation lagayein
     ['freightRate', 'hamali', 'reward', 'biltiChares', 'advanced'].forEach(id => {
         const el = document.getElementById(id);
         el.addEventListener('input', calculate);
@@ -194,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addRowBtn.addEventListener('click', addRow);
 
-    // Truck Number formatting (Auto space)
     document.getElementById('truckNo').addEventListener('input', (e) => {
         let val = e.target.value.toUpperCase().replace(/\s/g, '');
         if (val.length > 2) val = val.slice(0, 2) + ' ' + val.slice(2);
