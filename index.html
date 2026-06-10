@@ -3,166 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATC - Booking Slip (Landscape)</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="images/ATC_Logo.png" type="image/png">
+    <title>ATC Landscape LR System</title>
+    <link rel="stylesheet" href="lr_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Library add karein (Head ke andar) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-
-    <!-- 1. LOGIN SCREEN SECTION (Naya Add Kiya Gaya) -->
-    <div id="loginOverlay" class="login-overlay">
-        <div class="login-card">
-            <img src="images/truck_logo.png" alt="ATC Logo" class="login-logo">
-            <h1 class="login-heading">ATC TRANSPORT COMPANY</h1>
-            <p class="login-subtext">Secure Booking Management System</p>
+    <div class="landscape-paper">
+        <div class="lr-container">
+            <!-- Watermark -->
             
-            <div class="login-input-group">
-                <input type="password" id="entryPass" placeholder="Enter System Password" onkeypress="handleLoginKeyPress(event)">
-                <button onclick="verifyLogin()" class="btn-login">LOGIN</button>
-            </div>
-            <p id="loginError" class="login-error-msg" style="display: none;">❌ Incorrect Password. Access Denied!</p>
-        </div>
-    </div>
 
-    <!-- 2. MAIN APP CONTAINER (Initial display: none rakha hai) -->
-    <div class="container" id="bookingSlip" style="display: none;">
-        <header>
-            <div class="header-left">
-                <img src="images/ATC_Logo.png" alt="ATC Logo" class="logo">
-            </div>
-            
-            <div class="header-center">
-                <h1 class="atc-initials">ATC</h1>
-                <h2 class="company-name">ALLINDIA TRANSPORT COMPANY</h2>
-                <p class="tagline">TRUCK OWNER, LORRY SUPPLIER & COMMISSION AGENT</p>
-            </div>
-            
-            <div class="header-right">
-                <p class="contact-person"><span class="label">Prop:</span> MA. MUNNA BHAI</p>
-                <p class="contact-number"><span class="label">MOB:</span> 9797977098</p>
-                <p class="contact-number"><span class="label">OFC:</span> 8888664019</p>
-            </div>
-        </header>
-
-        <div class="daily-service-full-width-band">
-            DAILY SERVICE: UP, DELHI, HARIYANA, PUNJAB, J&K, BIHAR, WB, ASSAM, ODISHA, KA, GUJARAT, AGARTALA & ALL INDIA
-        </div>
-        <div class="aurangabad-office-full-width-band">
-            AURANGABAD OFFICE: Solapur-Dhule Road, Gut No. 102, Fatiyabad Opp. Nayra Petroleum, Aurangabad. MH-431002
-        </div>
-
-        <div class="section-grid">
-            <div class="grid-item">
-                <label>L.R. NO.</label>
-                <input type="text" id="lrNo" readonly>
-            </div>
-            <div class="grid-item span-2" style="background: #f0f7ff; text-align:center; display:flex; align-items:center; justify-content:center;">
-                <p style="margin:0; font-weight:bold; color:var(--primary-blue); font-size:0.85em;">BOOKED AT OWNER'S RISK</p>
-            </div>
-            <div class="grid-item">
-                <label>Date</label>
-                <input type="date" id="date">
-            </div>
-            <div class="grid-item span-2"> 
-                <label>TRUCK No.</label>
-                <input type="text" id="truckNo" placeholder="MH 20 AB 1234">
-            </div>
-        </div>
-
-        <div class="location-row">
-            <div class="grid-item">
-                <label>FROM (Origin)</label>
-                <input type="text" id="fromLoc" placeholder="Enter Origin">
-            </div>
-            <div class="grid-item">
-                <label>TO (Destination)</label>
-                <input type="text" id="toLoc" placeholder="Enter Destination">
-            </div>
-        </div>
-
-        <div class="contact-info">
-            <div class="consignor-details">
-                <label>Consignor's Name & Address:</label>
-                <textarea id="consignor"></textarea>
-            </div>
-            <div class="consignee-details">
-                <label>Consignee Name & Address:</label>
-                <textarea id="consignee"></textarea>
-            </div>
-        </div>
-
-        <div class="main-content-row">
-            <div class="goods-table-container">
-                <table class="goods-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Name of Goods</th>
-                            <th style="width: 15%;">Pkg</th>
-                            <th style="width: 20%;">Weight (Kgs)</th>
-                            <th style="width: 20%;">Rate per T</th>
-                            <th style="width: 20%;">Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody id="goodsTableBody">
-                        <!-- Rows added by JS -->
-                    </tbody>
-                </table>
-                <button id="addGoodsRowBtn" class="btn-add-row" style="margin-top:10px;">+ Add More Material</button>
-            </div>
-
-            <div class="amount-table-container">
-                <table class="nested-amount-table">
-                    <tr><td class="charge-label">Freight</td><td><input type="text" id="freightRate" class="money" value="0"></td></tr>
-                    <tr><td class="charge-label">Hamali</td><td><input type="text" id="hamali" class="money" value="0"></td></tr>
-                    <tr><td class="charge-label">Reward/Other</td><td><input type="text" id="reward" class="money" value="0"></td></tr>
-                    <tr><td class="charge-label">Bilti Charges</td><td><input type="text" id="biltiChares" class="money" value="0"></td></tr>
-                    <tr class="total-highlight"><td class="charge-label">Total Amount</td><td><input type="text" id="totalAmount" class="money" readonly></td></tr>
-                    <tr><td class="charge-label">Advanced</td><td><input type="text" id="advanced" class="money" value="0"></td></tr>
-                    <tr class="to-pay-row"><td class="charge-label">TO PAY</td><td><input type="text" id="toPay" class="money" readonly></td></tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="footer-details">
-            <div class="bank-info">
-                <p class="terms-heading">BANK DETAILS</p>
-                <p>PAN: AATAA8635M | A/c: 50200111576931</p>
-                <p>HDFC Bank, Vidya Narayan Nagar, A.bad.</p>
-                <p>IFSC: HDFC0008604</p>
-            </div>
-            <div class="terms-conditions">
-                <p class="terms-heading">TERMS & CONDITIONS</p>
-                <ol>
-                    <li>No responsibility for damage by rain, fire, theft, accident.</li>
-                    <li>Responsibility of the goods lies with lorry owner & driver.</li>
-                    <li>Claims must be notified within 7 days, check all paper before loading</li>
-                    <li>Handover all concerned document to driver, Guide Driver properly for unloading</li>
-                </ol>
-            </div>
-            <div class="signature-section">
-                <div class="signature-box">
-                    <img src="images/sign.png" alt="Authorized Signature" class="auth-sign-img">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="header-left">
+                    <img src="images/ATC_Logo.png" alt="Logo" class="lr-logo">
                 </div>
-                <p>Authorized Signature</p>
+                <div class="header-center">
+                    <h1 class="main-title">ATC</h1>
+                    <h2 class="sub-title">ALLINDIA TRANSPORT COMPANY</h2>
+                    <p class="tagline">TRUCK OWNER, LORRY SUPPLIER & COMMISSION AGENT</p>
+                    <div class="blue-bar">DAILY SERVICE: UP, DELHI, HARIYANA, PUNJAB, J&K, BIHAR, WB, ASSAM, ODISHA, KA, GUJARAT, AGARTALA & ALL INDIA</div>
+                </div>
+                <div class="header-right">
+                    <p class="prop-name">Prop: MA. MUNNA BHAI</p>
+                    <p><b>MOB:</b> 9797977098</p>
+                    <p><b>Office:</b> 8888664019</p>
+                </div>
             </div>
-        </div>
 
-        <div class="pod-instruction">
-            Note: Send Original Receiving (POD) at: ATC Munna Bhai PF 2115 Shahjhapur Karodi, DTDC Courier Aurangabad 431136 (MH) | Mob: 8830464553
-        </div>
-        <div class="legal-note">
-            Do not divert, re-route, or re-book without consignor's written permission; deliver only to destination.
+            <div class="address-line">AURANGABAD OFFICE: Solapur-Dhule Road, Gut No. 102, Fatiyabad Opp. Nayra Petroleum, Aurangabad. MH-431002</div>
+
+            <form id="lrForm">
+                <!-- Top Info Row -->
+                <div class="form-row mt-10">
+                    <div class="input-box w-15 highlight-box">
+                        <label>L.R. NO.</label>
+                        <input type="text" id="lrNo" placeholder="505" required>
+                    </div>
+                    <div class="risk-badge w-25">BOOKED AT OWNER'S RISK</div>
+                    <div class="input-box w-20">
+                        <label>DATE</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="input-box w-20">
+                        <label>TRUCK NO.</label>
+                        <input type="text" id="truckNo" placeholder="MH 20 AB 1234" required style="text-transform:uppercase;">
+                    </div>
+                    <div class="input-box w-20">
+                        <label>BOOKING AT</label>
+                        <input type="text" id="bookingAt" placeholder="Aurangabad">
+                    </div>
+                </div>
+
+                <!-- From/To and Parties Section -->
+                <div class="parties-section">
+                    <div class="party-col">
+                        <div class="input-box mb-5">
+                            <label>FROM (ORIGIN)</label>
+                            <input type="text" id="from" required>
+                        </div>
+                        <div class="input-box">
+    <label>Consignor's Name & Address:</label>
+    <textarea id="consignor" rows="2" placeholder="Line 1&#10;Line 2"></textarea>
+</div>
+
+
+                    </div>
+                    <div class="party-col">
+                        <div class="input-box mb-5">
+                            <label>TO (DESTINATION)</label>
+                            <input type="text" id="to" required>
+                        </div>
+                       <!-- Consignee Section -->
+<div class="input-box">
+    <label>Consignee Name & Address:</label>
+    <textarea id="consignee" rows="2" placeholder="Line 1&#10;Line 2"></textarea>
+</div>
+                    </div>
+                </div>
+
+                <!-- Items and Calculations -->
+                <div class="main-grid">
+                    <div class="grid-left">
+                        <table class="items-table">
+                            <thead>
+    <tr>
+        <th width="35%">Name of Goods</th>
+        <th width="10%">Pkg</th>
+        <th width="15%">Weight (Kgs)</th>
+        <th width="15%">Rate per T</th>
+        <th width="25%">Remark</th> <!-- Remark ko thoda bada kiya -->
+    </tr>
+</thead>
+                            <tbody>
+                                <tr>
+                                    <td><textarea id="goods" placeholder="Material Name..."></textarea></td>
+                                    <td><input type="number" id="pkg" value="0"></td>
+                                    <td><input type="number" id="weight" value="0" class="calc-in"></td>
+<td><input type="number" id="rate" value="0" class="calc-in"></td>
+
+                                    <td><textarea id="remark"></textarea></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="grid-right">
+                        <div class="calc-row"><span>Freight</span><input type="number" id="freight" value="0" class="calc-in"></div>
+                        <div class="calc-row"><span>Hamali</span><input type="number" id="hamali" value="0" class="calc-in"></div>
+                        <div class="calc-row"><span>Other Charges</span><input type="number" id="reward" value="0" class="calc-in"></div>
+                        <div class="calc-row"><span>Bilti Charges</span><input type="number" id="bilti" value="0" class="calc-in"></div>
+                        <div class="calc-row total-row"><span>TOTAL</span><input type="number" id="totalAmount" readonly value="0"></div>
+                        <div class="calc-row"><span>Advanced</span><input type="number" id="advanced" value="0" class="calc-in"></div>
+                        <div class="calc-row pay-row"><span>TO PAY</span><span id="toPay" class="tbb-text">TBB BILL AT</span></div>
+                    </div>
+                </div>
+
+                <!-- Footer Section -->
+                <div class="footer-row">
+                    <div class="footer-left">
+                        <div class="bank-details">
+                            <p class="f-title">BANK DETAILS</p>
+                            <p>PAN: AATAA8635M | A/c: 50200111576931</p>
+                            <p>HDFC Bank, Vidya Narayan Nagar, Aurangabad | IFSC: HDFC0008604</p>
+                        </div>
+                        <div class="pod-note">
+                           Note: Send Original Receiving (POD) at: ATC Munna Bhai PF 2115 Shahjhapur Karodi, DTDC Courier Aurangabad 431136 (MH) | Mob: 8830464553
+                        </div>
+                    </div>
+                    <!-- Footer Section ke andar Terms wala part -->
+<div class="footer-center">
+    <p class="f-title">TERMS & CONDITIONS</p>
+    <ul class="terms-list">
+        <li>Lorry owner responsible for damage/theft/rain/fire/accident etc.</li>
+        <li>The responsibility of the goods lies on the lorry owner & driver.</li>
+        <li>No claim etc. will be entertained if not brought to notice within 7 days.</li>
+        <li>Check all the papers before loading the lorry.</li>
+        <li>Handover all the concerned documents to the driver.</li>
+        <li>Guide driver for proper unloading of the material.</li>
+    </ul>
+</div>
+                    <div class="footer-right">
+                        <div class="sign-area">
+                            <img src="images/sign.png" class="sign-img">
+                            <div class="sign-line">Authorized Signature</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="warning-bar">Do not divert, re-route, or re-book without consignor's written permission; deliver only to destination.</div>
+
+                <button type="submit" id="submitBtn">Save & Print Landscape LR</button>
+            </form>
         </div>
     </div>
-
-    <!-- 3. CONTROLS (Initial display: none rakha hai) -->
-    <div class="controls" style="display: none;">
-        <button type="button" onclick="handlePrint()" class="btn btn-primary">Print Landscape Slip</button>
-    </div>
-
-    <!-- Libraries and Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="lr_script.js"></script>
 </body>
+<!-- Stylish Login Overlay -->
+<div id="login-overlay">
+    <div class="road"></div> <!-- Road Effect -->
+    <div class="login-content">
+        <div class="truck-wrapper" id="truckWrapper">
+            <img src="images/Truck.png" class="anim-truck" id="loginTruck">
+            <div class="truck-shadow"></div>
+        </div>
+        
+        <div class="password-card" id="passCard">
+            <div class="card-header">
+                <span class="lock-icon">🔒</span>
+                <h2>ATC SECURE LOGIN</h2>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" id="passInput" placeholder="ENTER PIN" maxlength="4">
+                <span class="input-focus-line"></span>
+            </div>
+            <button onclick="checkPassword()" id="loginBtn">ACCESS SYSTEM</button>
+            <p id="errorMsg">ACCESS DENIED - WRONG PIN</p>
+        </div>
+    </div>
+</div>
 </html>

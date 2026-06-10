@@ -1,0 +1,540 @@
+/* --- Global Styles --- */
+* { 
+    box-sizing: border-box; 
+    font-family: 'Roboto', sans-serif; 
+    margin: 0; 
+    padding: 0; 
+}
+
+body { 
+    background-color: #525659; 
+    padding: 15px; 
+}
+
+/* Landscape Paper Setup */
+.landscape-paper {
+    background: white;
+    width: 297mm;
+    min-height: 205mm;
+    margin: auto;
+    padding: 12px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* --- Textarea & Wrapping Logic (modified for better compatibility) --- */
+textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    /* Notebook lines logic - ye print mein dikhega */
+    background-image: linear-gradient(transparent 95%, #cccccc 95%); 
+    background-size: 100% 24px;
+    line-height: 24px;
+    padding: 0 5px;
+    font-size: 14px;
+    font-weight: bold;
+    resize: none;
+    overflow: hidden;
+    /* ye properties screen pe wrap ke liye hain, PDF mein div wrap karega */
+    white-space: normal; 
+    word-wrap: break-word;
+    word-break: break-all; 
+}
+
+/* Isko hatana hoga taaki textarea ka original height set ho ske */
+.parties-section .input-box {
+    min-height: 95px; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header Section --- */
+/* ... (Header section remains the same as previous update) ... */
+.header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 2.5px solid #1a2a6c; 
+    padding-bottom: 5px; 
+}
+.lr-logo { height: 80px; }
+.header-center { text-align: center; flex: 1; padding: 0 20px; }
+.main-title { font-size: 52px; color: #1a2a6c; font-weight: 900; line-height: 1; letter-spacing: 4px; }
+.sub-title { font-size: 19px; font-weight: bold; color: #333; }
+.tagline { font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase; }
+
+.blue-bar { 
+    background: #1a2a6c !important; 
+    color: white !important; 
+    font-size: 10px; 
+    padding: 5px; 
+    margin-top: 5px; 
+    font-weight: bold; 
+    border-radius: 3px; 
+    text-align: center;
+    -webkit-print-color-adjust: exact;
+}
+
+.address-line { 
+    text-align: center; 
+    font-size: 11px; 
+    padding: 4px; 
+    background: #f0f7ff !important; 
+    color: #1a2a6c; 
+    font-weight: bold; 
+    border: 1px solid #d1e3f8; 
+    margin-bottom: 8px;
+    -webkit-print-color-adjust: exact;
+}
+
+.header-right { text-align: right; font-size: 12px; line-height: 1.4; }
+.prop-name { color: #d35400; font-weight: bold; font-size: 15px; border-bottom: 1px solid #ddd; margin-bottom: 3px; }
+
+
+/* --- Grid & Input Boxes --- */
+.form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.parties-section { display: flex; gap: 10px; margin-bottom: 10px; }
+.party-col { flex: 1; }
+
+.input-box { 
+    border: 1.5px solid #000; 
+    padding: 6px; 
+    border-radius: 3px; 
+    background: #fafafa; 
+}
+
+.input-box label { font-size: 10px; font-weight: bold; color: #1a2a6c; display: block; margin-bottom: 3px; text-transform: uppercase; }
+.input-box input { border: none; outline: none; background: transparent; font-size: 14px; font-weight: bold; width: 100%; }
+
+.w-15 { width: 15%; } .w-25 { width: 25%; } .w-20 { width: 20%; }
+.highlight-box { border-left: 5px solid #1a2a6c; }
+
+.risk-badge { 
+    border: 2px dashed #d35400; 
+    background: #fff5f0 !important; 
+    color: #d35400; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    font-size: 12px;
+    -webkit-print-color-adjust: exact;
+}
+
+/* --- Main Table (Items Grid) --- */
+.main-grid { display: flex; border: 2px solid #000; border-radius: 4px; overflow: hidden; }
+.grid-left { flex: 2.5; border-right: 2px solid #000; }
+.grid-right { flex: 1; background: #fff; }
+
+.items-table { width: 100%; border-collapse: collapse; }
+.items-table th { 
+    background: #1a2a6c !important; 
+    color: white !important; 
+    font-size: 11px; 
+    padding: 8px; 
+    border: 1px solid #000; 
+    -webkit-print-color-adjust: exact;
+}
+/* Table ke har box (cell) ki setting */
+.items-table td { 
+    border: 1px solid #000; 
+    height: 140px; /* Aap ise apne hisaab se kam-zyada kar sakte hain */
+    vertical-align: middle; 
+    padding: 0; 
+    overflow: hidden;
+}
+
+/* Table ke andar wale Textarea ko poora failane ke liye */
+.items-table td textarea {
+    width: 100%;
+    height: 100%; /* Box ki poori height cover karega */
+    border: none;
+    padding: 8px;
+    resize: none;
+    background-attachment: local; /* Notebook lines scroll ke saath rahengi */
+    display: block;
+}
+
+/* Pkg, Weight, Rate wale inputs ko bada aur center karne ke liye */
+.items-table td input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    text-align: center; /* Number center mein dikhega */
+    font-size: 16px;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+/* --- Calculation Section --- */
+.calc-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 6px 10px; 
+    border-bottom: 1px solid #000; 
+    font-size: 12px; 
+    font-weight: bold; 
+}
+.calc-row input { width: 95px; text-align: right; border: none; font-weight: bold; color: #1a2a6c; outline: none; }
+
+.total-row { 
+    background: #1a2a6c !important; 
+    color: white !important; 
+    -webkit-print-color-adjust: exact;
+}
+.total-row input { color: white !important; background: transparent; font-size: 15px; }
+
+.pay-row { 
+    background: #fffde7 !important; 
+    height: 45px; 
+    align-items: center; 
+    color: #d32f2f; 
+    font-size: 17px; 
+    border-bottom: none;
+    -webkit-print-color-adjust: exact;
+}
+
+/* --- Footer --- */
+.footer-row { display: flex; gap: 15px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #000; }
+.footer-left { flex: 1.4; }
+.footer-center { flex: 1.2; }
+.footer-right { flex: 1; text-align: center; }
+
+.bank-details { font-size: 9.5px; border: 1.5px solid #000; padding: 6px; margin-bottom: 5px; background: #fafafa; line-height: 1.3; }
+.pod-note { font-size: 9px; color: #c0392b; font-weight: bold; line-height: 1.2; }
+.terms-list { margin-left: 15px; font-size: 8.5px; line-height: 1.2; color: #333; }
+.f-title { font-weight: bold; color: #1a2a6c; font-size: 10px; margin-bottom: 4px; text-decoration: underline; }
+
+.sign-area { position: relative; margin-top: 25px; }
+.sign-img {
+    width: 100px;         /* Image ki size choti-badi karne ke liye */
+    position: absolute;
+    
+    /* --- UPAR-NEECHE (UP/DOWN) --- */
+    top: -40px;           /* Minus (-) badhaoge toh aur UPAR jayega (e.g. -60px) */
+                          /* Minus (-) kam karoge toh NEECHE ayega (e.g. -20px) */
+
+    /* --- RIGHT-LEFT --- */
+    right: 100px;          /* Isko badhaoge toh LEFT jayega (e.g. 50px) */
+                          /* Isko kam karoge toh RIGHT jayega (e.g. 0px) */
+}
+.sign-line { border-top: 2px solid #000; display: inline-block; width: 90%; font-weight: bold; padding-top: 4px; font-size: 12px; color: #000; }
+
+.warning-bar { 
+    background: #1a2a6c !important; 
+    color: white !important; 
+    text-align: center; 
+    font-size: 9px; 
+    padding: 5px; 
+    margin-top: 10px; 
+    letter-spacing: 0.5px; 
+    -webkit-print-color-adjust: exact;
+}
+
+/* --- Button Styling --- */
+button { 
+    width: 100%; padding: 15px; background: #d35400; color: white; border: none; 
+    font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 5px; margin-top: 15px;
+}
+
+/* --- Print & PDF Fixes --- */
+@page { size: landscape; margin: 0; }
+@media print {
+    body { background: white; padding: 0; }
+    button { display: none !important; }
+    .landscape-paper { 
+        width: 100%; 
+        height: 100%; 
+        box-shadow: none; 
+        padding: 10mm; 
+    }
+    /* Print mein bhi notebook lines dikhengi */
+    textarea { 
+        -webkit-print-color-adjust: exact; 
+        background-image: linear-gradient(transparent 95%, #cccccc 95%) !important; 
+        /* PDF mein wrapping ke liye yeh properties zaruri hain */
+        white-space: pre-wrap !important; 
+        word-break: break-all !important;
+    }
+    /* PDF mein text wrap karne ke liye yeh Styles bhi add honge */
+    .party-col .input-box textarea[style*="display: none"] + div {
+        white-space: pre-wrap !important;
+        word-break: break-all !important;
+        line-height: 1.4 !important;
+        font-size: 13px !important;
+        font-weight: bold !important;
+    }
+}
+
+/* --- FROM aur TO fields ke liye special badlav --- */
+
+/* 1. Box ki unchai (Height) badalne ke liye */
+.parties-section .input-box {
+    padding: 10px;        /* 6px se badhakar 10px kiya (Isse box bada dikhega) */
+    min-height: 50px;     /* Aap box ki minimum height yahan se set kar sakte hain */
+}
+
+/* 2. "FROM" aur "TO" ke andar likhe jane wale text ki size */
+#from, #to {
+    font-size: 18px !important;    /* Default 14px tha, ise 18px kiya */
+    font-weight: 900;              /* Text ko zyada bold karne ke liye */
+    color: #000;                   /* Text ka rang */
+    text-transform: uppercase;     /* Sab capital mein likha jayega */
+}
+
+/* 3. Upar jo chota "FROM (ORIGIN)" likha hai uski size */
+.parties-section .input-box label {
+    font-size: 12px !important;    /* Default 10px tha */
+    margin-bottom: 5px;
+}
+
+/* 4. Box ki Chaudai (Width) control karne ke liye */
+/* Agar aap chahte hain ki FROM wala box bada ho aur TO chota, toh ise badlein */
+.party-col {
+    flex: 1; /* Dono 1-1 hain matlab barabar hain. Agar ek ko 1.5 karenge toh wo bada ho jayega */
+}
+
+/* Number input ke upar-niche wale arrows hatane ke liye (optional) */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.calc-in {
+    background-color: #fff !important;
+}
+
+/* --- Stylish Login Overlay --- */
+#login-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, #1a2a6c, #000);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: opacity 0.8s ease;
+}
+
+.truck-wrapper {
+    position: absolute;
+    left: -200px; /* Shuruat screen ke bahar se */
+    top: 40%;
+    animation: truckEnter 2s forwards cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.anim-truck {
+    width: 150px;
+    filter: drop-shadow(0 0 15px #fff);
+}
+
+@keyframes truckEnter {
+    0% { left: -200px; }
+    100% { left: 50%; transform: translateX(-50%); } /* Beech mein rukega */
+}
+
+/* Password Box Styling */
+.password-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    opacity: 0;
+    margin-top: 150px;
+    animation: fadeIn 1s 2s forwards; /* Truck ke rukne ke baad dikhega */
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.atc-text { color: white; letter-spacing: 5px; margin-bottom: 20px; font-weight: 900; }
+
+#passInput {
+    padding: 12px; border-radius: 5px; border: none; outline: none;
+    font-size: 18px; text-align: center; width: 180px; margin-bottom: 15px;
+}
+
+#loginBtn {
+    padding: 12px 30px; background: #d35400; color: white; border: none;
+    border-radius: 5px; cursor: pointer; font-weight: bold; width: auto; margin-top: 0;
+}
+
+/* Success Animation: Truck moves out */
+.truck-exit {
+    animation: truckExit 1.5s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045) !important;
+}
+
+@keyframes truckExit {
+    to { left: 150%; }
+}
+
+.hide-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+/* --- Ultra Modern Login Style --- */
+#login-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #0f0c29;
+    background: linear-gradient(to bottom, #24243e, #302b63, #0f0c29);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Road effect */
+.road {
+    position: absolute;
+    bottom: 30%;
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+.truck-wrapper {
+    position: absolute;
+    left: -500px;
+    top: 35%;
+    transform: translateY(-50%);
+    transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 2;
+}
+
+.anim-truck {
+    width: 320px; /* Truck size */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+}
+
+.truck-shadow {
+    width: 80%;
+    height: 15px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    margin: -10px auto 0;
+    filter: blur(5px);
+}
+
+/* Truck entering animation */
+.truck-in {
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Password Card Styling */
+.password-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 24px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    margin-top: 180px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease 1.2s;
+}
+
+.password-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-header h2 {
+    color: white;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+.lock-icon { font-size: 30px; display: block; margin-bottom: 10px; }
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+#passInput {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    padding: 10px;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+#passInput:focus {
+    border-bottom-color: #d35400;
+}
+
+#loginBtn {
+    width: 100%;
+    padding: 15px;
+    background: #d35400;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+}
+
+#loginBtn:hover {
+    background: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(211, 84, 0, 0.4);
+}
+
+#errorMsg {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: 15px;
+    display: none;
+    font-weight: bold;
+}
+
+/* Correct password animations */
+.card-fade-out {
+    opacity: 0 !important;
+    transform: scale(0.9) !important;
+    transition: 0.4s !important;
+}
+
+.truck-exit-fast {
+    left: 150% !important;
+    transition: 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) !important;
+}
+
+.overlay-hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Shake effect for wrong password */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
