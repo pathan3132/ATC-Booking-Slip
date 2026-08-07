@@ -32,6 +32,19 @@
 
             <div class="address-line">AURANGABAD OFFICE: Solapur-Dhule Road, Gut No. 102, Fatiyabad Opp. Nayra Petroleum, Aurangabad. MH-431002</div>
 
+            <div class="website-banner" id="websiteBanner">
+                <div class="website-text">
+                    <span class="website-globe">🌐</span>
+                    <span>Visit Our Website:</span>
+                    <a href="https://atctransport.in" target="_blank" class="website-link">www.atctransport.in</a>
+                </div>
+                <div class="website-text">
+                    <span class="website-globe">✉️</span>
+                    <span>Email:</span>
+                    <a href="mailto:munnakhan26925@gmail.com" class="website-link">munnakhan26925@gmail.com</a>
+                </div>
+            </div>
+
             <form id="lrForm">
                 <div class="form-row mt-10">
                     <div class="input-box w-15 highlight-box">
@@ -132,6 +145,10 @@
                             <li>Guide driver for proper unloading of the material.</li>
                         </ul>
                     </div>
+                    <div class="footer-qr" id="footerQr">
+                        <img src="images/QR_Code.png" alt="Scan to visit atctransport.in" class="footer-qr-img">
+                        <p class="footer-qr-caption">SCAN TO VISIT<br>atctransport.in</p>
+                    </div>
                     <div class="footer-right">
                         <div class="sign-area">
                             <img src="images/sign.png" class="sign-img">
@@ -146,8 +163,9 @@
     <!-- PDF Area End -->
 
     <!-- Button Section (Outside PDF) -->
-    <div style="max-width: 297mm; margin: 20px auto; padding: 0 15px; text-align: center;">
-        <button type="submit" form="lrForm" id="submitBtn">Save Data to Sheet & Print Landscape LR</button>
+    <div id="actionButtons" style="max-width: 297mm; margin: 20px auto; padding: 0 15px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button type="submit" form="lrForm" id="submitBtn" style="flex: 2; min-width: 260px;">Save Data to Sheet & Print Landscape LR</button>
+        <button type="button" id="blankPdfBtn" onclick="downloadBlankPDF()" style="flex: 1; min-width: 200px;">Download Blank LR (For Manual Fill)</button>
     </div>
 
     <!-- Login Overlay -->
@@ -162,6 +180,19 @@
             </div>
             <button onclick="checkPassword()" id="loginBtn">ACCESS SYSTEM</button>
             <p id="errorMsg">ACCESS DENIED - WRONG PIN</p>
+        </div>
+    </div>
+
+    <!-- What's New Button & Modal -->
+    <button id="whatsNewBtn" class="whats-new-fab" title="What's New / System Updates">🆕</button>
+    <div id="whatsNewOverlay" class="whats-new-overlay">
+        <div class="whats-new-card">
+            <div class="whats-new-header">
+                <h2>🆕 System Update</h2>
+                <button id="closeWhatsNew" class="wn-close">&times;</button>
+            </div>
+            <div class="whats-new-body" id="whatsNewBody"></div>
+            <button id="wnOkBtn" class="wn-ok-btn">Theek Hai, Samajh Gaya</button>
         </div>
     </div>
 
