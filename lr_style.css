@@ -284,6 +284,44 @@ textarea {
     -webkit-print-color-adjust: exact;
 }
 
+/* --- Old LR Load Section --- */
+#oldLrSection {
+    max-width: 297mm;
+    margin: 20px auto 0;
+    padding: 0 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#oldLrNoInput {
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 2px solid #1a2a6c;
+    border-radius: 5px;
+    min-width: 220px;
+    outline: none;
+}
+#loadOldLrBtn {
+    padding: 12px 18px;
+    background: #1a2a6c;
+    color: white;
+    border: none;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    min-width: 180px;
+}
+#loadOldLrBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media print {
+    #oldLrSection { display: none !important; }
+}
+
 /* --- External Button Styling --- */
 #submitBtn { 
     width: 100%; padding: 15px; background: #d35400; color: white; border: none; 

@@ -68,6 +68,18 @@ async function generateFitToPagePDF(element, filename) {
         // out entirely removes that whole source of the gap.
     };
     const pdf = await html2pdf().set(opt).from(element).toPdf().get('pdf');
+
+    // Safety net: even though the PDF page height is calculated to exactly
+    // match the content, tiny rounding differences between the measured
+    // height and what html2canvas actually renders can occasionally push a
+    // few stray pixels onto a second page, leaving it blank. If that ever
+    // happens, delete every page after the first so the PDF is always
+    // guaranteed to be exactly one page.
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = totalPages; i > 1; i--) {
+        pdf.deletePage(i);
+    }
+
     addWebsiteLinkToPDF(pdf, element);
     pdf.save(filename);
 }
@@ -184,6 +196,52 @@ async function fetchLastLR() {
         const lastLR = await response.text();
         if(!isNaN(lastLR) && lastLR !== "") document.getElementById('lrNo').value = parseInt(lastLR) + 1;
     } catch (err) { console.log("LR Fetch Error"); }
+}
+
+// Loads a previously saved LR from the Sheet back into the form so it can
+// be viewed, edited, or reprinted. Requires the backend Apps Script to
+// support an "action=getLR&lrNo=..." endpoint (see setup note below the
+// function) that returns that row's data as JSON.
+async function loadOldLR() {
+    const lrNoInput = document.getElementById('oldLrNoInput');
+    const lrNo = lrNoInput.value.trim();
+    if (!lrNo) { alert("Pehle LR No. dalein jise load karna hai."); return; }
+
+    const btn = document.getElementById('loadOldLrBtn');
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = "Dhoondh Rahe Hain...";
+
+    try {
+        const response = await fetch(SHEET_URL + "?action=getLR&lrNo=" + encodeURIComponent(lrNo));
+        const text = await response.text();
+        const data = JSON.parse(text);
+
+        if (!data || data.error) {
+            alert("LR No. " + lrNo + " sheet mein nahi mili. Number check karein.");
+            return;
+        }
+
+        // Keys here must match whatever key names the backend returns
+        // (see the sample Apps Script snippet in the setup note below).
+        const fieldMap = ['lrNo', 'date', 'truckNo', 'from', 'to', 'consignor',
+            'consignee', 'goods', 'pkg', 'weight', 'rate', 'remark',
+            'freight', 'hamali', 'reward', 'bilti', 'advanced'];
+        fieldMap.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && data[id] !== undefined && data[id] !== null) el.value = data[id];
+        });
+
+        calculate(); // recompute Total & To Pay from the loaded numbers
+        lrNoInput.value = "";
+        alert("LR No. " + lrNo + " load ho gayi. Ab print/PDF button se dobara nikaal sakte hain.");
+    } catch (err) {
+        console.log("Old LR Fetch Error:", err);
+        alert("Purani LR load nahi ho payi. Backend (Apps Script) mein 'getLR' action set hai ya nahi check karein.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
 }
 
 function calculate() {
