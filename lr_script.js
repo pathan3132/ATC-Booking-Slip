@@ -360,26 +360,27 @@ document.getElementById('lrForm').addEventListener('submit', async function(e) {
     btn.disabled = true;
 
     const data = {
-        lrNo: document.getElementById('lrNo').value,
-        date: document.getElementById('date').value,
-        truckNo: document.getElementById('truckNo').value,
-        from: document.getElementById('from').value,
-        to: document.getElementById('to').value,
-        consignor: document.getElementById('consignor').value,
-        consignee: document.getElementById('consignee').value,
-        goods: document.getElementById('goods').value,
-        pkg: document.getElementById('pkg').value,
-        weight: document.getElementById('weight').value,
-        rate: document.getElementById('rate').value,
-        remark: document.getElementById('remark').value,
-        freight: document.getElementById('freight').value,
-        hamali: document.getElementById('hamali').value,
-        reward: document.getElementById('reward').value,
-        bilti: document.getElementById('bilti').value,
-        total: document.getElementById('totalAmount').value,
-        advanced: document.getElementById('advanced').value,
-        toPay: document.getElementById('toPay').innerText
-    };
+    lrNo: document.getElementById('lrNo').value,
+    date: document.getElementById('date').value,
+    truckNo: document.getElementById('truckNo').value,
+    from: document.getElementById('from').value,
+    to: document.getElementById('to').value,
+    consignor: document.getElementById('consignor').value,
+    consignee: document.getElementById('consignee').value,
+    goods: document.getElementById('goods').value,
+    pkg: document.getElementById('pkg').value,
+    weight: document.getElementById('weight').value,
+    rate: document.getElementById('rate').value,
+    remark: document.getElementById('remark').value,
+    // Decimal points ko string bana kar bhej rahe hain
+    freight: parseFloat(document.getElementById('freight').value || 0).toFixed(2).toString(),
+    hamali: parseFloat(document.getElementById('hamali').value || 0).toFixed(2).toString(),
+    reward: parseFloat(document.getElementById('reward').value || 0).toFixed(2).toString(),
+    bilti: parseFloat(document.getElementById('bilti').value || 0).toFixed(2).toString(),
+    total: parseFloat(document.getElementById('totalAmount').value || 0).toFixed(2).toString(),
+    advanced: parseFloat(document.getElementById('advanced').value || 0).toFixed(2).toString(),
+    toPay: document.getElementById('toPay').innerText
+};
 
     try {
         await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
@@ -390,3 +391,20 @@ document.getElementById('lrForm').addEventListener('submit', async function(e) {
         btn.innerText = "Save Data to Sheet & Print";
     }
 });
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('PWA Service Worker Registered'))
+            .catch(err => console.log('Service Worker Failed', err));
+    });
+}
+
+// submit button ke logic mein...
+const consignor = document.getElementById('consignor').value;
+let saved = JSON.parse(localStorage.getItem('saved_parties') || '[]');
+if(!saved.includes(consignor)) {
+    saved.push(consignor);
+    localStorage.setItem('saved_parties', JSON.stringify(saved));
+}
+

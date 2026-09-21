@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+<!-- Android Theme -->
+<meta name="theme-color" content="#1a2a6c">
+<!-- iOS Icons (Apple ke liye ye zaruri hai) -->
+<link rel="apple-touch-icon" href="images/ATC_Logo.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATC LR">
+    <link rel="apple-touch-icon" href="images/ATC_Logo.png">
+    
     <title>ATC Landscape LR System</title>
     <link rel="stylesheet" href="lr_style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
@@ -33,17 +44,26 @@
             <div class="address-line">AURANGABAD OFFICE: Solapur-Dhule Road, Gut No. 102, Fatiyabad Opp. Nayra Petroleum, Aurangabad. MH-431002</div>
 
             <div class="website-banner" id="websiteBanner">
-                <div class="website-text">
-                    <span class="website-globe">🌐</span>
-                    <span>Visit Our Website:</span>
-                    <a href="https://atctransport.in" target="_blank" class="website-link">www.atctransport.in</a>
-                </div>
-                <div class="website-text">
-                    <span class="website-globe">✉️</span>
-                    <span>Email:</span>
-                    <a href="mailto:munnakhan26925@gmail.com" class="website-link">munnakhan26925@gmail.com</a>
-                </div>
-            </div>
+    <div class="website-text">
+        <span class="website-globe">🌐</span>
+        <span>Visit Our Website:</span>
+        <a href="https://atctransport.in" target="_blank" class="website-link">www.atctransport.in</a>
+    </div>
+    <div class="website-text">
+        <span class="website-globe">✉️</span>
+        <span>Email:</span>
+        <a href="mailto:munnakhan26925@gmail.com" class="website-link">munnakhan26925@gmail.com</a>
+    </div>
+    <!-- Naya Udyam Block -->
+    <!-- Naya Udyam Block (Clickable Link ke saath) -->
+<div class="website-text">
+    <span class="website-globe">🆔</span>
+    <span>Udyam:</span>
+    <a href="https://drive.google.com/file/d/1kwNbR9pbgWlw0eCZVKxL88OJpQh4ks6W/view?usp=sharing" target="_blank" class="website-link">
+        UDYAM-MH-04-0206156
+    </a>
+</div>
+</div>
 
             <form id="lrForm">
                 <div class="form-row mt-10">
@@ -66,27 +86,44 @@
                     </div>
                 </div>
 
-               <div class="parties-section">
+              <div class="parties-section">
     <div class="party-col">
-        <!-- mb-5 ko mb-10 kiya -->
         <div class="input-box mb-10">
             <label>FROM (ORIGIN)</label>
-            <input type="text" id="from" required>
+            <input type="text" id="from" list="fromList" required>
+            <datalist id="fromList">
+                <option value="AURANGABAD">
+                <option value="DELHI">
+                <option value="PUNJAB">
+            </datalist>
         </div>
         <div class="input-box">
             <label>Consignor's Name & Address:</label>
-            <textarea id="consignor" rows="2" placeholder="Line 1&#10;Line 2"></textarea>
+            <!-- list attribute add kiya -->
+            <textarea id="consignor" rows="2" list="consignorList" placeholder="Line 1&#10;Line 2"></textarea>
+            <!-- Suggestions ke liye datalist -->
+            <datalist id="consignorList">
+                <option value="NAME 1 - ADDRESS 1">
+                <option value="NAME 2 - ADDRESS 2">
+            </datalist>
         </div>
     </div>
     <div class="party-col">
-        <!-- mb-5 ko mb-10 kiya -->
         <div class="input-box mb-10">
             <label>TO (DESTINATION)</label>
-            <input type="text" id="to" required>
+            <input type="text" id="to" list="toList" required>
+            <datalist id="toList">
+                <option value="PUNJAB">
+                <option value="UP">
+            </datalist>
         </div>
         <div class="input-box">
             <label>Consignee Name & Address:</label>
-            <textarea id="consignee" rows="2" placeholder="Line 1&#10;Line 2"></textarea>
+            <!-- list attribute add kiya -->
+            <textarea id="consignee" rows="2" list="consigneeList" placeholder="Line 1&#10;Line 2"></textarea>
+            <datalist id="consigneeList">
+                <option value="NAME 3 - ADDRESS 3">
+            </datalist>
         </div>
     </div>
 </div>
@@ -95,34 +132,39 @@
                     <div class="grid-left">
                         <table class="items-table">
                             <thead>
-                                <tr>
-                                    <th width="35%">Name of Goods</th>
-                                    <th width="10%">Pkg</th>
-                                    <th width="15%">Weight (Kgs)</th>
-                                    <th width="15%">Rate per T</th>
-                                    <th width="25%">Remark</th>
-                                </tr>
-                            </thead>
+    <tr>
+        <th width="35%">Name of Goods</th>
+        <th width="10%">Pkg</th>
+        <th width="15%">Weight (Kgs)</th>
+        <th width="15%">Rate per T (₹)</th>
+        <th width="25%">Remark</th>
+    </tr>
+</thead>
+
                             <tbody>
                                 <tr>
                                     <td><textarea id="goods" placeholder="Material Name..."></textarea></td>
-                                    <td><input type="number" id="pkg" value="0"></td>
-                                    <td><input type="number" id="weight" value="0" class="calc-in"></td>
-                                    <td><input type="number" id="rate" value="0" class="calc-in"></td>
+                                    <td><input type="number" id="pkg" value="0" step="any"></td>
+                                    <td><input type="number" id="weight" value="0" class="calc-in" step="any"></td>
+                                    <td><input type="number" id="rate" value="0" class="calc-in" step="any"></td>
                                     <td><textarea id="remark"></textarea></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="grid-right">
-                        <div class="calc-row"><span>Freight</span><input type="number" id="freight" value="0" class="calc-in"></div>
-                        <div class="calc-row"><span>Hamali</span><input type="number" id="hamali" value="0" class="calc-in"></div>
-                        <div class="calc-row"><span>Other Charges</span><input type="number" id="reward" value="0" class="calc-in"></div>
-                        <div class="calc-row"><span>Bilti Charges</span><input type="number" id="bilti" value="0" class="calc-in"></div>
-                        <div class="calc-row total-row"><span>TOTAL</span><input type="number" id="totalAmount" readonly value="0"></div>
-                        <div class="calc-row"><span>Advanced</span><input type="number" id="advanced" value="0" class="calc-in"></div>
-                        <div class="calc-row pay-row"><span>TO PAY</span><span id="toPay" class="tbb-text">TBB BILL AT</span></div>
-                    </div>
+                   <div class="grid-right">
+    <!-- Freight ke saath -->
+    <div class="calc-row"><span>Freight (₹)</span><input type="number" id="freight" value="0" class="calc-in" step="any"></div>
+    
+    <!-- Hamali, Other, Bilti -->
+    <div class="calc-row"><span>Hamali (₹)</span><input type="number" id="hamali" value="0" class="calc-in" step="any"></div>
+    <div class="calc-row"><span>Other Charges (₹)</span><input type="number" id="reward" value="0" class="calc-in" step="any"></div>
+    <div class="calc-row"><span>Bilti Charges (₹)</span><input type="number" id="bilti" value="0" class="calc-in" step="any"></div>
+    
+    <div class="calc-row total-row"><span>TOTAL (₹)</span><input type="number" id="totalAmount" readonly value="0" step="any"></div>
+    <div class="calc-row"><span>Advanced (₹)</span><input type="number" id="advanced" value="0" class="calc-in" step="any"></div>
+    <div class="calc-row pay-row"><span>TO PAY</span><span id="toPay" class="tbb-text">TBB BILL AT</span></div>
+</div>
                 </div>
 
                 <div class="footer-row">
@@ -146,13 +188,16 @@
                         </ul>
                     </div>
                     <div class="footer-qr" id="footerQr">
-                        <img src="images/QR_Code.png" alt="Scan to visit atctransport.in" class="footer-qr-img">
-                        <p class="footer-qr-caption">SCAN TO VISIT<br>atctransport.in</p>
-                    </div>
+    <img src="images/QR_Code.png" alt="Scan" class="footer-qr-img">
+    <div class="footer-qr-caption">
+        SCAN TO VISIT<br>
+        <span style="color: #d35400;">www.atctransport.in</span>
+    </div>
+</div>
                     <div class="footer-right">
                         <div class="sign-area">
                             <img src="images/sign.png" class="sign-img">
-                            <div class="sign-line">Authorized Signature</div>
+                            <div class="sign-line">Authorized Sign & Stamp</div>
                         </div>
                     </div>
                 </div>
@@ -201,6 +246,17 @@
             <button id="wnOkBtn" class="wn-ok-btn">Theek Hai, Samajh Gaya</button>
         </div>
     </div>
+
+    <!-- Address History Modal -->
+<div id="addressModal" class="whats-new-overlay">
+    <div class="whats-new-card" style="width: 400px;">
+        <div class="whats-new-header">
+            <h2 id="modalTitle">Select Address</h2>
+            <button onclick="document.getElementById('addressModal').classList.remove('show')" class="wn-close">&times;</button>
+        </div>
+        <div id="addressList" style="max-height: 300px; overflow-y: auto;"></div>
+    </div>
+</div>
 
     <script src="lr_script.js"></script>
 </body>

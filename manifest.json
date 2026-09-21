@@ -1,12 +1,24 @@
 {
-  "name": "ATC LR System",
+  "name": "ATC Landscape LR System",
   "short_name": "ATC LR",
-  "start_url": "index.html",
+  "description": "ATC Lorry Receipt Generation System",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a2a6c",
+  "orientation": "landscape",
   "icons": [
-    { "src": "images/ATC_Logo.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "images/ATC_Logo.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "images/ATC_Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "images/ATC_Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
