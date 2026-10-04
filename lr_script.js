@@ -145,8 +145,17 @@ document.getElementById('passInput')?.addEventListener('keypress', (e) => {
 // Bump APP_VERSION and add a new entry at the TOP of CHANGELOG whenever you ship an update.
 // Each user's browser shows the popup once automatically after login, the first time it
 // sees a new version; they can also reopen it anytime with the 🆕 button.
-const APP_VERSION = "2.0";
+const APP_VERSION = "2.1";
 const CHANGELOG = [
+    {
+        version: "2.1",
+        date: "04 Oct 2026",
+        changes: [
+            "Consignor aur Consignee box mein type karte hi Sheet ke purane naam/address ka suggestion dikhta hai.",
+            "Thoda sa bhi type karo (naam ka koi bhi hissa) to match hone wale suggestions aa jaate hain. Suggestion par tap/click karo to poora address bhar jata hai.",
+            "Naya LR save karne par wo party agli baar ke liye suggestion mein judd jaati hai."
+        ]
+    },
     {
         version: "2.0",
         date: "07 Aug 2026",
@@ -188,6 +197,9 @@ document.getElementById('wnOkBtn')?.addEventListener('click', closeWhatsNew);
 window.onload = function() {
     document.getElementById('date').value = new Date().toISOString().split('T')[0];
     fetchLastLR();
+    loadPartyCache();
+    fetchParties();
+    initPartySuggest();
 };
 
 async function fetchLastLR() {
@@ -382,6 +394,9 @@ document.getElementById('lrForm').addEventListener('submit', async function(e) {
     toPay: document.getElementById('toPay').innerText
 };
 
+    rememberParty('consignor', data.consignor);
+    rememberParty('consignee', data.consignee);
+
     try {
         await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
         downloadPDF();
@@ -400,11 +415,156 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// submit button ke logic mein...
-const consignor = document.getElementById('consignor').value;
-let saved = JSON.parse(localStorage.getItem('saved_parties') || '[]');
-if(!saved.includes(consignor)) {
-    saved.push(consignor);
-    localStorage.setItem('saved_parties', JSON.stringify(saved));
+// ===================== Consignor / Consignee Suggestions =====================
+// Sheet (Column F & G) se purani parties lekar type karte waqt suggest karta hai.
+// <textarea> par <datalist> kaam nahi karta, isliye apna custom dropdown banaya hai.
+const PARTY_CACHE_KEY = 'atc_lr_party_cache_v1';
+let partyData = { consignor: [], consignee: [] };
+
+function normParty(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
+
+function loadPartyCache() {
+    try {
+        const c = JSON.parse(localStorage.getItem(PARTY_CACHE_KEY));
+        if (c && Array.isArray(c.consignor) && Array.isArray(c.consignee)) partyData = c;
+    } catch (err) {}
 }
 
+function savePartyCache() {
+    try { localStorage.setItem(PARTY_CACHE_KEY, JSON.stringify(partyData)); } catch (err) {}
+}
+
+async function fetchParties() {
+    try {
+        const response = await fetch(SHEET_URL + "?action=getParties");
+        const d = JSON.parse(await response.text());
+        if (d && Array.isArray(d.consignor)) {
+            partyData = { consignor: d.consignor, consignee: Array.isArray(d.consignee) ? d.consignee : [] };
+            savePartyCache();
+        }
+    } catch (err) { console.log("Party Fetch Error (offline cache use hoga):", err); }
+}
+
+// Naya save hua party turant list mein sabse upar aa jaye
+function rememberParty(field, value) {
+    const v = String(value || '').trim();
+    if (!v || !partyData[field]) return;
+    const key = normParty(v).toLowerCase();
+    const list = partyData[field];
+    const i = list.findIndex(x => normParty(x).toLowerCase() === key);
+    if (i > -1) list.splice(i, 1);
+    list.unshift(v);
+    savePartyCache();
+}
+
+function searchParties(field, query) {
+    const other = field === 'consignor' ? 'consignee' : 'consignor';
+    const seen = new Set();
+    const all = [];
+    [...partyData[field], ...partyData[other]].forEach(p => {
+        const k = normParty(p).toLowerCase();
+        if (k && !seen.has(k)) { seen.add(k); all.push(p); }
+    });
+
+    const q = normParty(query).toLowerCase();
+    if (!q) return all.slice(0, 8);
+
+    const tokens = q.split(' ');
+    const scored = [];
+    all.forEach((p, idx) => {
+        const t = normParty(p).toLowerCase();
+        if (t === q) return; // jo pehle se poora likha hai use mat dikhao
+        if (!tokens.every(tok => t.includes(tok))) return; // har shabd match hona chahiye
+        let score = 0;
+        if (t.startsWith(q)) score = 3;
+        else if (t.includes(' ' + q)) score = 2;
+        else if (t.includes(q)) score = 1;
+        scored.push({ p, score, idx });
+    });
+    scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
+    return scored.slice(0, 8).map(s => s.p);
+}
+
+function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function highlightMatch(text, query) {
+    const tokens = normParty(query).split(' ').filter(Boolean)
+        .map(t => escapeHtml(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const safe = escapeHtml(text);
+    if (!tokens.length) return safe;
+    try { return safe.replace(new RegExp('(' + tokens.join('|') + ')', 'gi'), '<mark>$1</mark>'); }
+    catch (err) { return safe; }
+}
+
+function initPartySuggest() {
+    const box = document.createElement('div');
+    box.id = 'partySuggest';
+    document.body.appendChild(box);
+
+    let activeField = null, activeEl = null, items = [], activeIdx = -1;
+
+    function hide() {
+        box.classList.remove('show');
+        items = []; activeIdx = -1;
+    }
+
+    function position() {
+        if (!activeEl) return;
+        const r = activeEl.getBoundingClientRect();
+        box.style.left = (r.left + window.scrollX) + 'px';
+        box.style.top = (r.bottom + window.scrollY + 2) + 'px';
+        box.style.width = Math.max(r.width, 220) + 'px';
+    }
+
+    function setActive(i) {
+        activeIdx = i;
+        Array.from(box.children).forEach((el, n) => el.classList.toggle('active', n === i));
+        const el = box.children[i];
+        if (el) el.scrollIntoView({ block: 'nearest' });
+    }
+
+    function pick(value) {
+        if (!activeEl) return;
+        activeEl.value = value;
+        activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+        hide();
+        activeEl.focus();
+    }
+
+    function show() {
+        if (!activeEl) return;
+        items = searchParties(activeField, activeEl.value);
+        if (!items.length) { hide(); return; }
+        box.innerHTML = '';
+        items.forEach((p, n) => {
+            const div = document.createElement('div');
+            div.className = 'ps-item';
+            div.innerHTML = highlightMatch(p.replace(/\s*\n\s*/g, ' \u00B7 '), activeEl.value);
+            // mousedown + preventDefault: field ka focus na jaye aur pehle select ho jaye
+            div.addEventListener('mousedown', ev => { ev.preventDefault(); pick(items[n]); });
+            box.appendChild(div);
+        });
+        activeIdx = -1;
+        position();
+        box.classList.add('show');
+    }
+
+    ['consignor', 'consignee'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('focus', () => { activeField = id; activeEl = el; show(); });
+        el.addEventListener('input', () => { activeField = id; activeEl = el; show(); });
+        el.addEventListener('blur', hide);
+        el.addEventListener('keydown', ev => {
+            if (!box.classList.contains('show')) return;
+            if (ev.key === 'ArrowDown') { ev.preventDefault(); setActive((activeIdx + 1) % items.length); }
+            else if (ev.key === 'ArrowUp') { ev.preventDefault(); setActive((activeIdx - 1 + items.length) % items.length); }
+            else if (ev.key === 'Enter' && activeIdx > -1) { ev.preventDefault(); pick(items[activeIdx]); }
+            else if (ev.key === 'Escape') { hide(); }
+        });
+    });
+
+    window.addEventListener('resize', position);
+}

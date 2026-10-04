@@ -1,0 +1,137 @@
+function doGet(e) {
+  if (e.parameter.action == "getLastLR") {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return ContentService.createTextOutput("500");
+    
+    // Sabhi LR numbers (Column A) ko lekar unka MAX nikalte hain
+    var allLrNumbers = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    var maxLr = 0;
+    
+    for (var i = 0; i < allLrNumbers.length; i++) {
+      var currentLr = parseInt(allLrNumbers[i][0]);
+      if (!isNaN(currentLr) && currentLr > maxLr) {
+        maxLr = currentLr;
+      }
+    }
+    
+    return ContentService.createTextOutput(maxLr.toString());
+  }
+
+
+  if (e.parameter.action == "getParties") {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var lastRow = sheet.getLastRow();
+    var out = { consignor: [], consignee: [] };
+
+    if (lastRow >= 2) {
+      // Column F = Consignor, Column G = Consignee
+      var vals = sheet.getRange(2, 6, lastRow - 1, 2).getValues();
+      var seen = { consignor: {}, consignee: {} };
+      var LIMIT = 500;
+
+      // Neeche (latest) se upar ki taraf, taaki sabse naye party pehle aayein
+      for (var i = vals.length - 1; i >= 0; i--) {
+        var pair = [["consignor", vals[i][0]], ["consignee", vals[i][1]]];
+        for (var k = 0; k < pair.length; k++) {
+          var key = pair[k][0];
+          var txt = String(pair[k][1] || "").trim();
+          if (!txt) continue;
+          var norm = txt.replace(/\s+/g, " ").toLowerCase();
+          if (seen[key][norm] || out[key].length >= LIMIT) continue;
+          seen[key][norm] = true;
+          out[key].push(txt);
+        }
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(out))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (e.parameter.action == "getLR") {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var lrNo = e.parameter.lrNo;
+    var lastRow = sheet.getLastRow();
+
+    if (lastRow < 2) {
+      return ContentService.createTextOutput(JSON.stringify({ error: "not found" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Puri sheet padhkar Column A (LR No) se match dhoondte hain.
+    // Neeche se (sabse latest row se) upar ki taraf dhoondte hain, taaki
+    // agar kabhi ek hi LR No. do baar save ho gaya ho to sabse naya wala mile.
+    var allData = sheet.getRange(2, 1, lastRow - 1, 19).getValues();
+    for (var i = allData.length - 1; i >= 0; i--) {
+      var row = allData[i];
+      if (String(row[0]) === String(lrNo)) {
+        var dateVal = row[1];
+        // Date input (type="date") ko yyyy-MM-dd format chahiye hota hai.
+        var formattedDate = "";
+        if (dateVal instanceof Date) {
+          formattedDate = Utilities.formatDate(dateVal, Session.getScriptTimeZone(), "yyyy-MM-dd");
+        } else if (dateVal) {
+          formattedDate = dateVal.toString();
+        }
+
+        var result = {
+          lrNo: row[0],
+          date: formattedDate,
+          truckNo: row[2],
+          from: row[3],
+          to: row[4],
+          consignor: row[5],
+          consignee: row[6],
+          goods: row[7],
+          pkg: row[8],
+          weight: row[9],
+          rate: row[10],
+          remark: row[11],
+          freight: row[12],
+          hamali: row[13],
+          reward: row[14],
+          bilti: row[15],
+          total: row[16],
+          advanced: row[17],
+          toPay: row[18]
+        };
+
+        return ContentService.createTextOutput(JSON.stringify(result))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ error: "not found" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  
+  sheet.appendRow([
+    data.lrNo, 
+    data.date, 
+    data.truckNo, 
+    data.from, 
+    data.to, 
+    data.consignor, 
+    data.consignee, 
+    data.goods, 
+    data.pkg, 
+    parseFloat(data.weight), 
+    parseFloat(data.rate), 
+    data.remark, 
+    parseFloat(data.freight), 
+    parseFloat(data.hamali), 
+    parseFloat(data.reward), 
+    parseFloat(data.bilti), 
+    parseFloat(data.total), 
+    parseFloat(data.advanced), 
+    data.toPay
+  ]);
+  
+  return ContentService.createTextOutput("Success");
+}

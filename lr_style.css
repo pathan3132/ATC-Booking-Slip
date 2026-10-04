@@ -498,3 +498,33 @@ textarea {
     font-size: 10px; background: #1a2a6c; color: white; border: none; padding: 2px 8px;
     border-radius: 4px; cursor: pointer; margin-bottom: 5px;
 }
+
+/* --- Consignor / Consignee suggestion dropdown --- */
+#partySuggest {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+    background: #fff;
+    border: 1.5px solid #1a2a6c;
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    max-height: 260px;
+    overflow-y: auto;
+    font-family: 'Roboto', sans-serif;
+}
+#partySuggest.show { display: block; }
+#partySuggest .ps-item {
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    white-space: normal;
+    word-break: break-word;
+}
+#partySuggest .ps-item:last-child { border-bottom: none; }
+#partySuggest .ps-item.active,
+#partySuggest .ps-item:hover { background: #e8ecff; }
+#partySuggest .ps-item mark { background: #ffe58a; color: inherit; padding: 0; }
+@media print { #partySuggest { display: none !important; } }
