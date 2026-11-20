@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atc-lr-v6';
+const CACHE_NAME = 'atc-lr-v8';
 const ASSETS = [
   './index.html',
   './lr_style.css',

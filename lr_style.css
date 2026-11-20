@@ -528,3 +528,26 @@ textarea {
 #partySuggest .ps-item:hover { background: #e8ecff; }
 #partySuggest .ps-item mark { background: #ffe58a; color: inherit; padding: 0; }
 @media print { #partySuggest { display: none !important; } }
+
+/* --- Address line + Transporter ID badge (right corner) --- */
+.address-line {
+    display: flex;
+    flex-wrap: wrap;            /* jagah kam padi to badge neeche aa jayega */
+    align-items: center;
+    gap: 4px 14px;
+}
+.address-line > span:first-child {
+    flex: 1;
+    text-align: center;
+}
+.address-line .transporter-id {
+    margin-left: auto;          /* sabse right corner me */
+    background: #017506 !important;
+    color: #fff !important;
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    -webkit-print-color-adjust: exact;
+}
